@@ -1,8 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { AppDetails, VersionHistory } from '../types';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://demo.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'demo-key';
+
+// Add import for the URL check
+const isPlaceholder = supabaseUrl.includes('placeholder') || supabaseUrl.includes('demo');
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 

@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { User } from '../types';
 import { supabase } from '../lib/supabase';
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://demo.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'demo-key';
+
 interface AuthState {
   user: User | null;
   isLoading: boolean;
@@ -21,14 +24,22 @@ export const useAuthStore = create<AuthState>((set) => ({
   initialize: async () => {
     try {
       set({ isLoading: true });
-      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Skip auth initialization if using placeholder credentials
+      if (supabaseUrl.includes('placeholder') || supabaseAnonKey.includes('placeholder')) {
+        set({ user: null, isLoading: false });
+        return;
+      }
+      
+      const { data: { session } } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));
       
       if (session?.user) {
         const { data } = await supabase
           .from('users')
           .select('*')
           .eq('id', session.user.id)
-          .single();
+          .single()
+          .catch(() => ({ data: null }));
         
         set({ 
           user: data as User,
@@ -38,10 +49,11 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({ user: null, isLoading: false });
       }
     } catch (error) {
+      console.warn('Auth initialization failed:', error);
       set({ 
         user: null, 
         isLoading: false,
-        error: 'Failed to initialize auth session'
+        error: null
       });
     }
   },
@@ -49,6 +61,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email, password) => {
     try {
       set({ isLoading: true, error: null });
+      
+      if (supabaseUrl.includes('placeholder')) {
+        throw new Error('Please configure Supabase credentials to enable authentication');
+      }
+      
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) throw error;
@@ -78,6 +95,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (email, password, fullName) => {
     try {
       set({ isLoading: true, error: null });
+      
+      if (supabaseUrl.includes('placeholder')) {
+        throw new Error('Please configure Supabase credentials to enable registration');
+      }
+      
       const { error } = await supabase.auth.signUp({ 
         email, 
         password,
