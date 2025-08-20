@@ -18,7 +18,7 @@ function App() {
 
   // Initialize auth on app load
   useEffect(() => {
-    initialize();
+    initialize().catch(console.error);
   }, [initialize]);
 
   return (

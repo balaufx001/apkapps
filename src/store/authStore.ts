@@ -26,7 +26,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ isLoading: true });
       
       // Skip auth initialization if using placeholder credentials
-      if (supabaseUrl.includes('placeholder') || supabaseAnonKey.includes('placeholder')) {
+      if (supabaseUrl.includes('placeholder') || supabaseUrl.includes('demo') || supabaseAnonKey.includes('placeholder') || supabaseAnonKey.includes('demo')) {
         set({ user: null, isLoading: false });
         return;
       }

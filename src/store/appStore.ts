@@ -33,7 +33,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       set({ isLoading: true, error: null });
       
       // Use mock data if Supabase is not configured
-      if (supabaseUrl.includes('placeholder')) {
+      if (supabaseUrl.includes('placeholder') || supabaseUrl.includes('demo')) {
         const mockApps = [
           {
             id: '1',
@@ -120,7 +120,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   loadCategories: async () => {
     try {
       // Use mock categories if Supabase is not configured
-      if (supabaseUrl.includes('placeholder')) {
+      if (supabaseUrl.includes('placeholder') || supabaseUrl.includes('demo')) {
         const mockCategories = [
           { id: '1', name: 'Productivity', slug: 'productivity' },
           { id: '2', name: 'Games', slug: 'games' },
